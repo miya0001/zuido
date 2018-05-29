@@ -33,7 +33,12 @@ connectNgrok().then(client => {
   });
 
   http.createServer((req, res) => {
-    proxy.web(req, res);
+    try {
+      proxy.web(req, res);
+    } catch(e) {
+      console.log('\u001b[31mError: Please check URL and try again.\u001b[0m')
+      process.exit(1);
+    }
   }).listen(5000);
 
   console.log('\u001b[36mzuido v\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)');
@@ -43,6 +48,8 @@ connectNgrok().then(client => {
   console.log('\u001b[0m(Ctrl+C to quit)')
 
   opn(client.url);
+}).catch(function (error) {
+
 });
 
 async function connectNgrok() {
