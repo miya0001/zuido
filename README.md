@@ -20,6 +20,12 @@ If you are payed user of the ngrok, you can choose subdomain like following.
 $ zuido --subdomain=zuido http://localhsot:8080
 ```
 
+## How to install
+
+```
+$ npm install -g zuido
+```
+
 ## Configuration
 
 See documentation for ngrok.
