@@ -15,7 +15,6 @@ const help = () => {
 
 const defaults = {
   "proxy": 5000,
-  "region": "us"
 }
 
 const argv = require('minimist')(process.argv.slice(2), {
@@ -82,14 +81,23 @@ connectNgrok().then((client) => {
 
 async function connectNgrok() {
   const client = {}
-
-  client.url = await ngrok.connect({
+  const opts = {
     proto: 'http',
     addr: argv.proxy,
     configPath: `${process.env.HOME}/.ngrok2/ngrok.yml`,
-    subdomain: option.subdomain,
-    region: option.region,
-  });
+  }
+
+  if (option.subdomain) {
+    opts.subdomain = option.subdomain;
+  }
+
+  if (option.region) {
+    opts.region = option.region;
+  }
+
+  console.log(opts)
+
+  client.url = await ngrok.connect(opts);
 
   return client;
 }
