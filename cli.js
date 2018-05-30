@@ -7,6 +7,7 @@ const http = require('http'),
     modifyResponse = require('http-proxy-response-rewrite'),
     ngrok = require('ngrok'),
     opn = require('opn'),
+    url = require('url'),
     pkg = require('./package.json');
 
 const help = () => {
@@ -32,8 +33,15 @@ if (0 === argv._.length) {
   process.exit(1);
 }
 
+const origin = url.parse(argv._[0]);
+if (null === origin.protocol) {
+  help();
+  process.exit(1);
+}
+
 const option = {
-  origin: argv._[0].replace(/\/$/, ''),
+  origin: `${origin.protocol}//${origin.host}`,
+  url: argv._[0],
   subdomain: argv.subdomain,
   proxy: argv.proxy,
   region: argv.region,
@@ -45,6 +53,11 @@ if (0 === parseInt(option.port)) {
 }
 
 connectNgrok().then((client) => {
+  const update_hostname = (str) => {
+    const regex = new RegExp(option.origin, 'ig');
+    return str.replace(regex, client.url.replace(/\/$/, ''))
+  }
+
   const proxy = httpProxy.createProxyServer({
     target: option.origin,
     changeOrigin: true,
@@ -55,13 +68,13 @@ connectNgrok().then((client) => {
       delete proxyRes.headers['content-length'];
       modifyResponse(res, proxyRes.headers['content-encoding'], (body) => {
         if (body) {
-          body = body.replace(new RegExp(option.origin, 'ig'), client.url.replace(/\/$/, ''));
+          body = update_hostname(body);
         }
         return body;
       });
     }
     if (proxyRes.headers['location']) {
-      proxyRes.headers['location'] = proxyRes.headers['location'].replace(new RegExp(option.origin, 'ig'), client.url.replace(/\/$/, ''));
+      proxyRes.headers['location'] = update_hostname(proxyRes.headers['location']);
     }
   });
 
@@ -72,7 +85,7 @@ connectNgrok().then((client) => {
       console.log('\u001b[31mError: Please check URL and try again.\u001b[0m')
       process.exit(1);
     }
-  }).listen(argv.proxy);
+  }).listen(option.proxy);
 
   console.log(`\u001b[36mzuido v${pkg.version}\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)`);
   console.log('\u001b[32mWeb Interface: \u001b[0m' + 'http://localhost:4040');
@@ -80,7 +93,7 @@ connectNgrok().then((client) => {
   console.log(`\u001b[32mConfig Path: \u001b[0m${client.opts.configPath}`);
   console.log('\u001b[0m(Ctrl+C to quit)')
 
-  opn(client.url);
+  opn(update_hostname(option.url));
 }).catch((error) => {
   console.log(error)
 });
@@ -89,8 +102,8 @@ async function connectNgrok() {
   const client = {}
   const opts = {
     proto: 'http',
-    addr: argv.proxy,
-    configPath: argv.config,
+    addr: option.proxy,
+    configPath: option.config,
   }
 
   if (option.subdomain) {
