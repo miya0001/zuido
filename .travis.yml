@@ -16,5 +16,7 @@ deploy:
   api_key:
     secure: hp1d7giPGm9kWFWVCX9mML/l7VB51n0ErcfdW16/PWwlkHosQ+AZ2VZHDkFJOXY3KszaYHNdNwgdLSX6iBeTB+i5ptHpYjcik9RQEzuwwlBzNYkEeF3fOPhhtT07fAt2S8lBBVjo5y2bjyFVvcrrGKaLDrm6j2QvwVdWe1J6tVW0W3WKnhXdnUu6eZsogdZbygKv9ouc6a4oj9Yb+LewtIOq5+hPZIUOCP+Uh/mitBIqz4msKoVUKrtR+WYeKfgidt7axn2j+7YjLygJcZJm8CHpVtGZVRaFgBMW+5ZoRCyxY0aKbHlFFutIOUppZsJcPz+7UFSfiKDVeRpkxHzkpqO7JL98NthIwK/4WzkATGV9hG5nB28HKvPVpBt7GxE0g17OIecQJ/xXzvJpDB9DBPJgvFZ6MH9BrYXwTr6Wh7M5Ixo3gFyvFzOgjVzDB9XCvh931MeRYMguUuodQOdnpVxfdS9Rzc1QAuKTrA6k/l1rW3aCeioVnQNovH+yL1GUiJ1pZeeAmBSqqHhI9ilGla15N9S6svQ87Lhb638lLtImrGEaEqo3l85Bl8/KikFP47iEsPiujeI7Ul0Ro+n8xDDr6dDDdZs/YhyRfyzJbByFpTcf1xujAPhNJUIv040A9yXsH+ALLSLox7PY2/Yqwf8cs86saDximAVaGUIaX9w=
   on:
+    branch: master
     tags: true
     repo: miya0001/zuido
+  skip_cleanup: true
