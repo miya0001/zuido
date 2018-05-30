@@ -61,7 +61,7 @@ connectNgrok().then((client) => {
       });
     }
     if (proxyRes.headers['location']) {
-      proxyRes.headers['location'] = proxyRes.headers['location'].replace(new RegExp(option.origin, 'ig'), client.url.replace(/\/$/, ''));;
+      proxyRes.headers['location'] = proxyRes.headers['location'].replace(new RegExp(option.origin, 'ig'), client.url.replace(/\/$/, ''));
     }
   });
 
