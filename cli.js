@@ -61,6 +61,7 @@ connectNgrok().then((client) => {
   const proxy = httpProxy.createProxyServer({
     target: option.origin,
     changeOrigin: true,
+    secure: false,
   });
 
   proxy.on('proxyRes', (proxyRes, req, res) => {
