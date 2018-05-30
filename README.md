@@ -1,5 +1,8 @@
 # zuido
 
+[![Build Status](https://travis-ci.org/miya0001/zuido.svg?branch=master)](https://travis-ci.org/miya0001/zuido)
+[![npm version](https://badge.fury.io/js/zuido.svg)](https://badge.fury.io/js/zuido)
+
 `zuido` is a command line tool that allows you to connect your local development environment from public URLs with ngrok and simple reverse proxy.
 
 The proxy server in this command will change the URLs in your HTML to the public URL that is supplied by ngrok.
@@ -31,7 +34,7 @@ $ zuido --subdomain=zuido http://localhsot:8080
 
 The proxy server on this command will run on port 5000, you can change the port.
 ```
-$ zuido --proxy=3000 http://localhsot:8080 
+$ zuido --proxy=3000 http://localhsot:8080
 ```
 
 ## How to install
