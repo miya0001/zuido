@@ -9,11 +9,14 @@ The proxy server in this command will change the URLs in your HTML to the public
 
 https://ngrok.com/
 
+Do you want to test your WordPress with mobile? Zuido allows you to do it with zero configuration.
+
 "zuido" means "tunnel" in Japanese. :)
 
 ## Requires
 
 * Node 8.x or later
+* macOS, Unix/Linux
 
 ## Usage
 
@@ -26,11 +29,22 @@ Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port
 
 ### URL
 
-The URL like `http://localhost:8080`, `http://192.168.33.10/` or so.
+The URL like `http://localhost:8080`, `http://192.168.33.10/hello/world` or so.
+
+```
+$ zuido http://localhost:8080/
+```
 
 ### subdomain
 
 Optional. subdomain name to request. If unspecified, uses the tunnel name.
+
+```
+$ zuido http://localhost:8080/ --subdomain=xxxx
+```
+
+Free plan user can't use subdomain.
+https://ngrok.com/pricing
 
 ### region
 
@@ -41,13 +55,28 @@ Optional. The location of the datacenter for ngrok. The default value is `us`.
 * ap - Asia/Pacific (Singapore)
 * au - Australia (Sydney)
 
+```
+$ zuido http://localhost:8080/ --region=ap
+```
+
 ### proxy
 
 Optional. The port number for the reverse proxy in this command. The default value is `5000`.
 
+```
+$ zuido http://localhost:8080/ --proxy=3000
+```
+
 ### config
 
 Optional. Path to the config file for the ngrok.
+
+```
+$ zuido http://localhost:8080/ --config=/path/to/ngrok.yml
+```
+
+See documentation for ngrok.
+https://ngrok.com/docs#config
 
 ## Examples
 
@@ -68,17 +97,19 @@ The proxy server on this command will run on port 5000, you can change the port.
 $ zuido --proxy=3000 http://localhsot:8080
 ```
 
+You can pass full url like following.
+
+```
+$ zuido http://example.com/path/to/app?hello=world
+```
+
+In this case, new URL will be `http://xxxxxxxx.ngrok.io/path/to/app?hello=world`.
+
 ## How to install
 
 ```
 $ npm install -g zuido
 ```
-
-## Configuration
-
-See documentation for ngrok.
-
-https://ngrok.com/docs#config
 
 ## Contributing
 
