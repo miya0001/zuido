@@ -13,7 +13,8 @@ https://ngrok.com/
 ## Usage
 
 ```
-Usage: zuido <URL> [--subodomain=<subdomain>] [--port=<port>]
+$ zuido --help
+Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>]
 ```
 
 Forwards public URL (e.g, `https://xxxxxxxx.ngrok.io`) to `http://localhsot:8080` and open your browser.
@@ -26,6 +27,11 @@ If you are payed user of the ngrok, you can choose ngrok's subdomain like follow
 
 ```
 $ zuido --subdomain=zuido http://localhsot:8080
+```
+
+The proxy server on this command will run on port 5000, you can change the port.
+```
+$ zuido --proxy=3000 http://localhsot:8080 
 ```
 
 ## How to install
