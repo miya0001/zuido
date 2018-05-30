@@ -3,12 +3,12 @@
 'use strict';
 
 const http = require('http'),
-    httpProxy = require('http-proxy'),
-    modifyResponse = require('http-proxy-response-rewrite'),
-    ngrok = require('ngrok'),
-    opn = require('opn'),
-    url = require('url'),
-    pkg = require('./package.json');
+      httpProxy = require('http-proxy'),
+      modifyResponse = require('http-proxy-response-rewrite'),
+      ngrok = require('ngrok'),
+      opn = require('opn'),
+      url = require('url'),
+      pkg = require('./package.json');
 
 const help = () => {
   console.log('Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>] [--config=<config>]')
