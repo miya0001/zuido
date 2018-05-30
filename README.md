@@ -9,6 +9,8 @@ The proxy server in this command will change the URLs in your HTML to the public
 
 https://ngrok.com/
 
+"zuido" means "tunnel" in Japanese. :)
+
 ## Requires
 
 * Node 8.x or later
@@ -17,8 +19,37 @@ https://ngrok.com/
 
 ```
 $ zuido --help
-Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>]
+Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>] [--config=<config>]
 ```
+
+## OPTIONS
+
+### URL
+
+The URL like `http://localhost:8080`, `http://192.168.33.10/` or so.
+
+### subdomain
+
+Optional. subdomain name to request. If unspecified, uses the tunnel name.
+
+### region
+
+Optional. The location of the datacenter for ngrok. The default value is `us`.
+
+* us - United States (Ohio)
+* eu - Europe (Frankfurt)
+* ap - Asia/Pacific (Singapore)
+* au - Australia (Sydney)
+
+### proxy
+
+Optional. The port number for the reverse proxy in this command. The default value is `5000`.
+
+### config
+
+Optional. Path to the config file for the ngrok.
+
+## Examples
 
 Forwards public URL (e.g, `https://xxxxxxxx.ngrok.io`) to `http://localhsot:8080` and open your browser.
 

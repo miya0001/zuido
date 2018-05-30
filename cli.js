@@ -10,11 +10,12 @@ const http = require('http'),
     pkg = require('./package.json');
 
 const help = () => {
-  console.log('Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>]')
+  console.log('Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>] [--config=<config>]')
 }
 
 const defaults = {
   "proxy": 5000,
+  "config": `${process.env.HOME}/.ngrok2/ngrok.yml`,
 }
 
 const argv = require('minimist')(process.argv.slice(2), {
@@ -35,7 +36,8 @@ const option = {
   origin: argv._[0].replace(/\/$/, ''),
   subdomain: argv.subdomain,
   proxy: argv.proxy,
-  region: argv.region
+  region: argv.region,
+  config: argv.config,
 }
 
 if (0 === parseInt(option.port)) {
@@ -72,6 +74,7 @@ connectNgrok().then((client) => {
   console.log(`\u001b[36mzuido v${pkg.version}\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)`);
   console.log('\u001b[32mWeb Interface: \u001b[0m' + 'http://localhost:4040');
   console.log(`\u001b[32mForwarding: \u001b[0m${client.url} -> ${option.origin}`);
+  console.log(`\u001b[32mConfig Path: \u001b[0m${client.opts.configPath}`);
   console.log('\u001b[0m(Ctrl+C to quit)')
 
   opn(client.url);
@@ -84,7 +87,7 @@ async function connectNgrok() {
   const opts = {
     proto: 'http',
     addr: argv.proxy,
-    configPath: `${process.env.HOME}/.ngrok2/ngrok.yml`,
+    configPath: argv.config,
   }
 
   if (option.subdomain) {
@@ -95,9 +98,8 @@ async function connectNgrok() {
     opts.region = option.region;
   }
 
-  console.log(opts)
-
   client.url = await ngrok.connect(opts);
+  client.opts = opts;
 
   return client;
 }
