@@ -42,7 +42,7 @@ connectNgrok().then(client => {
   }).listen(5000);
 
   console.log('\u001b[36mzuido v\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)');
-  console.log('\u001b[32mWeb Interface: \u001b[0m' + origin);
+  console.log('\u001b[32mWeb Interface: \u001b[0m' + 'http://localhost:4040');
   console.log('\u001b[32mForwarding: \u001b[0m' + client.url + ' -> ' + origin);
   console.log('');
   console.log('\u001b[0m(Ctrl+C to quit)')
