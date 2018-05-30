@@ -14,7 +14,7 @@ Forwards public URL (e.g, `https://xxxxxxxx.ngrok.io`) to `http://localhsot:8080
 $ zuido http://localhsot:8080
 ```
 
-If you are payed user of the ngrok, you can choose subdomain like following.
+If you are payed user of the ngrok, you can choose ngrok's subdomain like following.
 
 ```
 $ zuido --subdomain=zuido http://localhsot:8080
