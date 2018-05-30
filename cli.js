@@ -9,23 +9,52 @@ const http = require('http'),
     opn = require('opn'),
     pkg = require('./package.json');
 
-const argv = require('minimist')(process.argv.slice(2));
+const help = () => {
+  console.log('Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>]')
+}
 
-const origin = argv._[0].replace(/\/$/, '');
-const subdomain = argv.subdomain;
+const defaults = {
+  "proxy": 5000,
+  "region": "us"
+}
 
-connectNgrok().then(client => {
+const argv = require('minimist')(process.argv.slice(2), {
+  default: defaults,
+});
+
+if ((true === argv.h) || (true === argv.help)) {
+  help();
+  process.exit(0);
+}
+
+if (0 === argv._.length) {
+  help();
+  process.exit(1);
+}
+
+const option = {
+  origin: argv._[0].replace(/\/$/, ''),
+  subdomain: argv.subdomain,
+  proxy: argv.proxy,
+  region: argv.region
+}
+
+if (0 === parseInt(option.port)) {
+  option.port = defaults.port;
+}
+
+connectNgrok().then((client) => {
   const proxy = httpProxy.createProxyServer({
-    target: origin,
+    target: option.origin,
     changeOrigin: true,
   });
 
   proxy.on('proxyRes', (proxyRes, req, res) => {
     if (proxyRes.headers['content-type'] && proxyRes.headers['content-type'].match(/text\/html/i)) {
       delete proxyRes.headers['content-length'];
-      modifyResponse(res, proxyRes.headers['content-encoding'], body => {
+      modifyResponse(res, proxyRes.headers['content-encoding'], (body) => {
         if (body) {
-          body = body.replace(new RegExp(origin, 'ig'), client.url.replace(/\/$/, ''));
+          body = body.replace(new RegExp(option.origin, 'ig'), client.url.replace(/\/$/, ''));
         }
         return body;
       });
@@ -39,17 +68,16 @@ connectNgrok().then(client => {
       console.log('\u001b[31mError: Please check URL and try again.\u001b[0m')
       process.exit(1);
     }
-  }).listen(5000);
+  }).listen(argv.proxy);
 
-  console.log('\u001b[36mzuido v\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)');
+  console.log(`\u001b[36mzuido v${pkg.version}\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)`);
   console.log('\u001b[32mWeb Interface: \u001b[0m' + 'http://localhost:4040');
-  console.log('\u001b[32mForwarding: \u001b[0m' + client.url + ' -> ' + origin);
-  console.log('');
+  console.log(`\u001b[32mForwarding: \u001b[0m${client.url} -> ${option.origin}`);
   console.log('\u001b[0m(Ctrl+C to quit)')
 
   opn(client.url);
-}).catch(function (error) {
-
+}).catch((error) => {
+  console.log(error)
 });
 
 async function connectNgrok() {
@@ -57,9 +85,10 @@ async function connectNgrok() {
 
   client.url = await ngrok.connect({
     proto: 'http',
-    addr: 5000,
-    configPath: process.env.HOME + '/.ngrok2/ngrok.yml',
-    subdomain: subdomain,
+    addr: argv.proxy,
+    configPath: `${process.env.HOME}/.ngrok2/ngrok.yml`,
+    subdomain: option.subdomain,
+    region: option.region,
   });
 
   return client;

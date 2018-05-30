@@ -6,7 +6,15 @@ The proxy server in this command will change the URLs in your HTML to the public
 
 https://ngrok.com/
 
+## Requires
+
+* Node 8.x or later
+
 ## Usage
+
+```
+Usage: zuido <URL> [--subodomain=<subdomain>] [--port=<port>]
+```
 
 Forwards public URL (e.g, `https://xxxxxxxx.ngrok.io`) to `http://localhsot:8080` and open your browser.
 

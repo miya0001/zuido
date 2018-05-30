@@ -4,7 +4,7 @@
   "description": "",
   "bin": "cli.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint cli.js"
   },
   "author": "",
   "license": "MIT",
@@ -15,5 +15,9 @@
     "minimist": "^1.2.0",
     "ngrok": "^3.0.1",
     "opn": "^5.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-plugin-node": "^6.0.1"
   }
 }
