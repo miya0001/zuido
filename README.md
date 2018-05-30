@@ -79,3 +79,11 @@ $ npm install -g zuido
 See documentation for ngrok.
 
 https://ngrok.com/docs#config
+
+## Contributing
+
+```
+$ git clone git@github.com:miya0001/zuido.git
+$ cd zuido && npm install
+$ npm test
+```
