@@ -12,6 +12,7 @@ const http = require('http'),
       pkg = require('./package.json');
 
 const help = () => {
+  console.log(`\u001b[36mzuido v${pkg.version}\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)\u001b[0m`);
   console.log('Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>] [--config=<config>]')
 }
 
