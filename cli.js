@@ -8,6 +8,7 @@ const http = require('http'),
       ngrok = require('ngrok'),
       opn = require('opn'),
       url = require('url'),
+      fs  = require('fs'),
       pkg = require('./package.json');
 
 const help = () => {
@@ -91,12 +92,13 @@ connectNgrok().then((client) => {
   console.log(`\u001b[36mzuido v${pkg.version}\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)`);
   console.log('\u001b[32mWeb Interface: \u001b[0m' + 'http://localhost:4040');
   console.log(`\u001b[32mForwarding: \u001b[0m${client.url} -> ${option.origin}`);
-  console.log(`\u001b[32mConfig Path: \u001b[0m${client.opts.configPath}`);
+  console.log(`\u001b[32mConfig Path: \u001b[0m${option.config}`);
   console.log('\u001b[0m(Ctrl+C to quit)')
 
   opn(update_hostname(option.url));
 }).catch((error) => {
-  console.log(error)
+  console.log(error);
+  process.exit(1);
 });
 
 async function connectNgrok() {
@@ -104,7 +106,13 @@ async function connectNgrok() {
   const opts = {
     proto: 'http',
     addr: option.proxy,
-    configPath: option.config,
+  }
+
+  try {
+    fs.statSync(option.config);
+    opts.configPath = option.config;
+  } catch(err) {
+    // nothing to do.
   }
 
   if (option.subdomain) {
