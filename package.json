@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "commander": "^2.15.1",
     "http": "0.0.0",
     "http-proxy": "^1.17.0",
     "http-proxy-response-rewrite": "0.0.1",
