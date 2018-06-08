@@ -25,7 +25,11 @@ const args = zuido.getArgs(program);
 
 connectNgrok().then((client) => {
   const update_hostname = (str) => {
-    return str.replace(args.regex, client.url.replace(/\/$/, ''))
+    if ('string' === typeof str) {
+      return str.replace(args.regex, client.url.replace(/\/$/, ''))
+    } else {
+      return str;
+    }
   }
 
   const proxy = httpProxy.createProxyServer({
@@ -44,9 +48,9 @@ connectNgrok().then((client) => {
         return body;
       });
     }
-    if (proxyRes.headers['location']) {
-      proxyRes.headers['location'] = update_hostname(proxyRes.headers['location']);
-    }
+    Object.keys(proxyRes.headers).forEach(key => {
+      proxyRes.headers[key] = update_hostname(proxyRes.headers[key]);
+    });
   });
 
   http.createServer((req, res) => {
