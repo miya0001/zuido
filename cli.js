@@ -25,8 +25,7 @@ const args = zuido.getArgs(program);
 
 connectNgrok().then((client) => {
   const update_hostname = (str) => {
-    const regex = new RegExp(args.origin, 'ig');
-    return str.replace(regex, client.url.replace(/\/$/, ''))
+    return str.replace(args.regex, client.url.replace(/\/$/, ''))
   }
 
   const proxy = httpProxy.createProxyServer({
