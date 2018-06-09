@@ -10,6 +10,7 @@ branches:
 node_js:
 - '8'
 - '9'
+- '10'
 deploy:
   provider: npm
   email: hatatatehaze@gmail.com
