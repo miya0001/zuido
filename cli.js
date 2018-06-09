@@ -21,7 +21,10 @@ program
   .option('--config <file>', 'Path to config files')
   .parse(process.argv);
 
-const args = zuido.getArgs(program);
+const args = zuido.getArgs(program, () => {
+  program.outputHelp();
+  process.exit(1);
+});
 
 connectNgrok().then((client) => {
   const update_hostname = (str) => {
@@ -48,7 +51,7 @@ connectNgrok().then((client) => {
         return body;
       });
     }
-    Object.keys(proxyRes.headers).forEach(key => {
+    Object.keys(proxyRes.headers).forEach((key) => {
       proxyRes.headers[key] = update_hostname(proxyRes.headers[key]);
     });
   });
