@@ -30,4 +30,15 @@ describe('`getArgs()` should work as expected.', function(){
     assert.deepEqual(5000, args.proxy);
     assert.deepEqual(`${process.env.HOME}/.ngrok2/ngrok.yml`, args.config);
   });
+  it('should return values as expected.', function(){
+    program.args = ['http://localhost:8080/hello-world'];
+    program.proxy = 3333;
+    program.config = 'hello';
+    const args = zuido.getArgs(program, () => {});
+    assert.deepEqual('http://localhost:8080', args.origin);
+    assert.deepEqual('http://localhost:8080/hello-world', args.url);
+    assert.deepEqual('/https?:\\/\\/localhost:8080/gi', args.regex.toString());
+    assert.deepEqual(3333, args.proxy);
+    assert.deepEqual('hello', args.config);
+  });
 });
