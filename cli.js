@@ -2,66 +2,41 @@
 
 'use strict';
 
-const http = require('http'),
-      httpProxy = require('http-proxy'),
-      modifyResponse = require('http-proxy-response-rewrite'),
-      ngrok = require('ngrok'),
-      opn = require('opn'),
-      url = require('url'),
-      fs  = require('fs'),
-      pkg = require('./package.json');
+const http = require('http');
+const httpProxy = require('http-proxy');
+const modifyResponse = require('http-proxy-response-rewrite');
+const ngrok = require('ngrok');
+const opn = require('opn');
+const fs = require('fs');
+const program = require('commander');
+const zuido = require('./lib/Zuido.js');
+const pkg = require('./package.json');
 
-const help = () => {
-  console.log(`\u001b[36mzuido v${pkg.version}\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)\u001b[0m`);
-  console.log('Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>] [--config=<config>]')
-}
+program
+  .version(pkg.version)
+  .usage('[options] <URL>')
+  .option('--subdomain <subdomain>', 'Custom subdomain.')
+  .option('--region <region>', 'ngrok server region. [us, eu, au, ap] (default: us)')
+  .option('--proxy <port>', 'The port number for the reverse proxy.', parseInt)
+  .option('--config <file>', 'Path to config files')
+  .parse(process.argv);
 
-const defaults = {
-  "proxy": 5000,
-  "config": `${process.env.HOME}/.ngrok2/ngrok.yml`,
-}
-
-const argv = require('minimist')(process.argv.slice(2), {
-  default: defaults,
+const args = zuido.getArgs(program, () => {
+  program.outputHelp();
+  process.exit(1);
 });
-
-if ((true === argv.h) || (true === argv.help)) {
-  help();
-  process.exit(0);
-}
-
-if (0 === argv._.length) {
-  help();
-  process.exit(1);
-}
-
-const origin = url.parse(argv._[0]);
-if (null === origin.protocol) {
-  help();
-  process.exit(1);
-}
-
-const option = {
-  origin: `${origin.protocol}//${origin.host}`,
-  url: argv._[0],
-  subdomain: argv.subdomain,
-  proxy: argv.proxy,
-  region: argv.region,
-  config: argv.config,
-}
-
-if (0 === parseInt(option.port)) {
-  option.port = defaults.port;
-}
 
 connectNgrok().then((client) => {
   const update_hostname = (str) => {
-    const regex = new RegExp(option.origin, 'ig');
-    return str.replace(regex, client.url.replace(/\/$/, ''))
+    if ('string' === typeof str) {
+      return str.replace(args.regex, client.url.replace(/\/$/, ''))
+    } else {
+      return str;
+    }
   }
 
   const proxy = httpProxy.createProxyServer({
-    target: option.origin,
+    target: args.origin,
     changeOrigin: true,
     secure: false,
   });
@@ -76,27 +51,28 @@ connectNgrok().then((client) => {
         return body;
       });
     }
-    if (proxyRes.headers['location']) {
-      proxyRes.headers['location'] = update_hostname(proxyRes.headers['location']);
-    }
+    Object.keys(proxyRes.headers).forEach((key) => {
+      proxyRes.headers[key] = update_hostname(proxyRes.headers[key]);
+    });
   });
 
   http.createServer((req, res) => {
     try {
       proxy.web(req, res);
     } catch(e) {
-      console.log('\u001b[31mError: Please check URL and try again.\u001b[0m')
-      process.exit(1);
+      zuido.error('Please check URL and try again.');
     }
-  }).listen(option.proxy);
+  }).listen(args.proxy).on('error', () => {
+    zuido.error(`Can not listen on port ${args.proxy}.`);
+  });
 
   console.log(`\u001b[36mzuido v${pkg.version}\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)`);
   console.log('\u001b[32mWeb Interface: \u001b[0m' + 'http://localhost:4040');
-  console.log(`\u001b[32mForwarding: \u001b[0m${client.url} -> ${option.origin}`);
-  console.log(`\u001b[32mConfig Path: \u001b[0m${option.config}`);
+  console.log(`\u001b[32mForwarding: \u001b[0m${client.url} -> ${args.origin}`);
+  console.log(`\u001b[32mConfig Path: \u001b[0m${args.config}`);
   console.log('\u001b[0m(Ctrl+C to quit)')
 
-  opn(update_hostname(option.url));
+  opn(update_hostname(args.url));
 }).catch((error) => {
   console.log(error);
   process.exit(1);
@@ -106,25 +82,31 @@ async function connectNgrok() {
   const client = {}
   const opts = {
     proto: 'http',
-    addr: option.proxy,
+    addr: args.proxy,
   }
 
   try {
-    fs.statSync(option.config);
-    opts.configPath = option.config;
+    fs.statSync(args.config);
+    opts.configPath = args.config;
   } catch(err) {
     // nothing to do.
   }
 
-  if (option.subdomain) {
-    opts.subdomain = option.subdomain;
+  if (args.subdomain) {
+    opts.subdomain = args.subdomain;
   }
 
-  if (option.region) {
-    opts.region = option.region;
+  if (args.region) {
+    opts.region = args.region;
   }
 
-  client.url = await ngrok.connect(opts);
+  try{
+    client.url = await ngrok.connect(opts);
+  } catch(e) {
+    zuido.error(e.details.err);
+    process.exit(1);
+  }
+
   client.opts = opts;
 
   return client;

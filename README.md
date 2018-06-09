@@ -22,7 +22,17 @@ Do you want to test your WordPress with mobile? Zuido allows you to do it with z
 
 ```
 $ zuido --help
-Usage: zuido <URL> [--subodomain=<subdomain>] [--region=<region>] [--proxy=<port>] [--config=<config>]
+
+  Usage: zuido [options] <URL>
+
+  Options:
+
+    -V, --version            output the version number
+    --subdomain <subdomain>  Custom subdomain.
+    --region <region>        ngrok server region. [us, eu, au, ap] (default: us)
+    --proxy <port>           The port number for the reverse proxy.
+    --config <file>          Path to config files
+    -h, --help               output usage information
 ```
 
 ## OPTIONS
