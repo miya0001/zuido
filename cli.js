@@ -60,10 +60,11 @@ connectNgrok().then((client) => {
     try {
       proxy.web(req, res);
     } catch(e) {
-      console.log('\u001b[31mError: Please check URL and try again.\u001b[0m')
-      process.exit(1);
+      zuido.error('Please check URL and try again.');
     }
-  }).listen(args.proxy);
+  }).listen(args.proxy).on('error', () => {
+    zuido.error(`Can not listen on port ${args.proxy}.`);
+  });
 
   console.log(`\u001b[36mzuido v${pkg.version}\u001b[0m by \u001b[36mTakayuki Miyauchi (@miya0001)`);
   console.log('\u001b[32mWeb Interface: \u001b[0m' + 'http://localhost:4040');
@@ -99,7 +100,13 @@ async function connectNgrok() {
     opts.region = args.region;
   }
 
-  client.url = await ngrok.connect(opts);
+  try{
+    client.url = await ngrok.connect(opts);
+  } catch(e) {
+    zuido.error(e.details.err);
+    process.exit(1);
+  }
+
   client.opts = opts;
 
   return client;

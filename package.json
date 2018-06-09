@@ -4,7 +4,7 @@
   "description": "",
   "bin": "cli.js",
   "scripts": {
-    "test": "eslint cli.js && mocha --exit"
+    "test": "eslint cli.js && eslint lib/Zuido.js && mocha --exit"
   },
   "author": "",
   "license": "MIT",
