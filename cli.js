@@ -11,6 +11,7 @@ const fs = require('fs');
 const program = require('commander');
 const zuido = require('./lib/Zuido.js');
 const pkg = require('./package.json');
+const httpd = require('http-server');
 
 program
   .version(pkg.version)
@@ -18,6 +19,7 @@ program
   .option('--subdomain <subdomain>', 'Custom subdomain.')
   .option('--region <region>', 'ngrok server region. [us, eu, au, ap] (default: us)')
   .option('--proxy <port>', 'The port number for the reverse proxy.', parseInt)
+  .option('--http-server <port>', 'Launch a webserver with the specific port.', parseInt)
   .option('--config <file>', 'Path to config files')
   .parse(process.argv);
 
@@ -27,6 +29,14 @@ const args = zuido.getArgs(program, () => {
 });
 
 connectNgrok().then((client) => {
+  if (parseInt(program.httpServer)) {
+    const server = httpd.createServer({
+      root: "./",
+    })
+
+    server.listen(parseInt(program.httpServer));
+  }
+
   const update_hostname = (str) => {
     if ('string' === typeof str) {
       return str.replace(args.regex, client.url.replace(/\/$/, ''))
