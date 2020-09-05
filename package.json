@@ -13,7 +13,7 @@
     "http": "0.0.0",
     "http-proxy": "^1.18.0",
     "http-proxy-response-rewrite": "0.0.1",
-    "http-server": "^0.11.1",
+    "http-server": "^0.12.3",
     "ngrok": "^3.2.7",
     "opn": "^5.5.0"
   },
